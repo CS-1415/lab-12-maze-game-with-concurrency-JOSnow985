@@ -2,20 +2,29 @@
 
 public class Entity
 {
+    public char Symbol { get; private set; }
     public int X { get; set; }
     public int Y { get; set; }
-    public Map currentMap { get; private set; }
-    public Entity(ref Map map, int startingX, int startingY)
+    public Map CurrentMap { get; private set; }
+    public Entity(ref Map map, int startingX, int startingY, char c)
     {
-        currentMap = map;
+        CurrentMap = map;
         X = startingX;
         Y = startingY;
+        Symbol = c;
+    }
+    public void MoveToken(int targetX, int targetY)     // Update entity's coordinates and the map's characters
+    {
+                CurrentMap.ChangeCell(X, Y, ' ');       // Clear entity's old cell
+                (X, Y) = (targetX, targetY);            // Update entity's current coordinates
+                CurrentMap.ChangeCell(X, Y, Symbol);    // Write entity character to new coordinates
     }
 }
 
 public class Player : Entity
 {
-    public Player(ref Map map) : base(ref map, 0, 0) {}
+    public int Score { get; set; }
+    public Player(ref Map map) : base(ref map, 0, 0, 'P') {}
 
     public void Move(Movement.Direction targetDirection)
     {
@@ -29,12 +38,8 @@ public class Player : Entity
             _ => (X, Y)
         };
 
-        // Call TryMove to see if that's a valid location
-        if (Movement.TryMove(targetX, targetY, currentMap))
-            {
-                currentMap.ChangeCell(X, Y, ' ');
-                (X, Y) = (targetX, targetY);    // If the location is valid, update player's coordinates
-                currentMap.ChangeCell(X, Y, 'P');
-            }
+        // Call TryMove, if true, call MoveToken to update player's coordinates
+        if (Movement.TryMove(targetX, targetY, CurrentMap))
+            MoveToken(targetX, targetY);
     }
 }
