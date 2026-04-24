@@ -45,8 +45,11 @@ do {
         default:
             break;
     }
+
+    // Check if player's score is high enough to drop the gate
     if (player.Score >= 1000)
     {
         map.DisableGateSymbols();
     }
+
 } while (lastKey != ConsoleKey.Escape);
