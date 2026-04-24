@@ -9,7 +9,7 @@ public class Map
     public Map(string mapfile)
     {
         Layout = LoadMapFile(mapfile);
-        MapEntities = LoadEntityList();
+        MapEntities = LoadEntityList();     // I don't know if it's safe to call a method like this from inside the constructor
     }
     private static List<List<char>> LoadMapFile(string filepath)
     {
