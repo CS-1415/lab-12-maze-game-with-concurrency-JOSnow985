@@ -45,4 +45,8 @@ do {
         default:
             break;
     }
+    if (player.Score >= 1000)
+    {
+        map.DisableGateSymbols();
+    }
 } while (lastKey != ConsoleKey.Escape);

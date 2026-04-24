@@ -28,6 +28,26 @@ public class Map
         return map;
     }
     public void ChangeCell(int col, int row, char c) => Layout[row][col] = c;
+    public void DisableGateSymbols()
+    {
+        List<List<char>> degatedMap = [];
+        foreach (List<char> row in Layout)
+        {
+            List<char> degatedRow = [];
+            foreach(char symbol in row)
+            {
+                if (symbol == '|')
+                {
+                    degatedRow.Add(' ');
+                }
+                else
+                    degatedRow.Add(symbol);
+            }
+            degatedMap.Add(degatedRow);
+        }
+
+        Layout = degatedMap;
+    }
     public void PrintMap()
     {
         // Iterate over rows and characters and print them
