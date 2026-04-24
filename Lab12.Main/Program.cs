@@ -12,7 +12,7 @@ Console.ReadKey();
 Map map = new("map.txt");
 
 // Create player object, pass map as a reference
-Player player = new(ref map);
+Player player = new(map);
 
 // Loop until the key pressed is Escape, print proposed directions
 ConsoleKey lastKey = ConsoleKey.None;

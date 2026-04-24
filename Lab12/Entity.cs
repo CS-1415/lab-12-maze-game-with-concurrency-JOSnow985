@@ -6,7 +6,7 @@ public class Entity
     public int X { get; set; }
     public int Y { get; set; }
     public Map CurrentMap { get; private set; }
-    public Entity(ref Map map, int startingX, int startingY, char c)
+    public Entity(Map map, int startingX, int startingY, char c)
     {
         CurrentMap = map;
         X = startingX;
@@ -24,7 +24,7 @@ public class Entity
 public class Player : Entity
 {
     public int Score { get; set; }
-    public Player(ref Map map) : base(ref map, 0, 0, 'P') {}
+    public Player(Map map) : base(map, 0, 0, 'P') {}
 
     public void Move(Movement.Direction targetDirection)
     {
