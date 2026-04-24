@@ -44,10 +44,17 @@ public class Player : Entity
             // Probably a better place to put this
             // Grab target cell's symbol and check if it's a score symbol
             char targetSymbol = CurrentMap.Layout[targetY][targetX];
-            if (targetSymbol == '$')
-                Score += 200;
-            else if (targetSymbol == '^')
-                Score += 100;
+            switch (targetSymbol)
+            {
+                case '$':
+                    Score += 200;
+                    break;
+                case '^':
+                    Score += 100;
+                    break;
+                default:
+                    break;
+            }
 
             // Update player coordinates
             MoveToken(targetX, targetY);
