@@ -1,14 +1,21 @@
 ﻿namespace Lab12;
 
-public class Player
+public class Entity
 {
-    public int X { get; private set; } = 0;
-    public int Y { get; private set; } = 0;
-    private List<List<char>> currentMap;
-    public Player(ref List<List<char>> mapList)
+    public int X { get; set; }
+    public int Y { get; set; }
+    public List<List<char>> currentMap { get; private set; }
+    public Entity(ref List<List<char>> mapList, int startingX, int startingY)
     {
         currentMap = mapList;
+        X = startingX;
+        Y = startingY;
     }
+}
+
+public class Player : Entity
+{
+    public Player(ref List<List<char>> mapList) : base(ref mapList, 0, 0) {}
 
     public void Move(Movement.Direction targetDirection)
     {
