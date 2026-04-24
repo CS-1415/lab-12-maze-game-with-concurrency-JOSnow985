@@ -11,9 +11,6 @@ Console.ReadKey();
 // Load Map
 Map map = new("map.txt");
 
-
-
-
 // Create player object, pass map as a reference
 Player player = new(ref map);
 
@@ -23,6 +20,11 @@ do {
     // Clear screen and print the map cell by cell
     Console.Clear();
     map.PrintMap();
+
+    // Print player score as a line under map
+    Console.WriteLine(player.Score);
+
+    // Player input switch
     lastKey = Console.ReadKey(true).Key;
     switch (lastKey)
     {

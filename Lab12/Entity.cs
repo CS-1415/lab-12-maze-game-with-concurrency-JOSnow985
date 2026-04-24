@@ -15,9 +15,9 @@ public class Entity
     }
     public void MoveToken(int targetX, int targetY)     // Update entity's coordinates and the map's characters
     {
-                CurrentMap.ChangeCell(X, Y, ' ');       // Clear entity's old cell
-                (X, Y) = (targetX, targetY);            // Update entity's current coordinates
-                CurrentMap.ChangeCell(X, Y, Symbol);    // Write entity character to new coordinates
+        CurrentMap.ChangeCell(X, Y, ' ');       // Clear entity's old cell
+        (X, Y) = (targetX, targetY);            // Update entity's current coordinates
+        CurrentMap.ChangeCell(X, Y, Symbol);    // Write entity character to new coordinates
     }
 }
 
@@ -40,6 +40,17 @@ public class Player : Entity
 
         // Call TryMove, if true, call MoveToken to update player's coordinates
         if (Movement.TryMove(targetX, targetY, this))
+        {
+            // Probably a better place to put this
+            // Grab target cell's symbol and check if it's a score symbol
+            char targetSymbol = CurrentMap.Layout[targetY][targetX];
+            if (targetSymbol == '$')
+                Score += 200;
+            else if (targetSymbol == '^')
+                Score += 100;
+
+            // Update player coordinates
             MoveToken(targetX, targetY);
+        }
     }
 }
