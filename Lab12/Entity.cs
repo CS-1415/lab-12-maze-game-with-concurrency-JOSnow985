@@ -39,7 +39,7 @@ public class Player : Entity
         };
 
         // Call TryMove, if true, call MoveToken to update player's coordinates
-        if (Movement.TryMove(targetX, targetY, CurrentMap))
+        if (Movement.TryMove(targetX, targetY, this))
             MoveToken(targetX, targetY);
     }
 }

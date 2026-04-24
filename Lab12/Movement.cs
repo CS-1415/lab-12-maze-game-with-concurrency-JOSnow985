@@ -2,16 +2,16 @@
 
 public static class Movement
 {
-    public static bool TryMove(int targetX, int targetY, Map map)
+    public static bool TryMove(int targetX, int targetY, Entity entity)
     {
         // If the check fails, we set passing to false
         if (!CheckScreenDimensions(targetX, targetY))
             return false;
 
-        if (!CheckMapDimensions(targetX, targetY, map))
+        if (!CheckMapDimensions(targetX, targetY, entity.CurrentMap))
             return false;
 
-        if (!CheckForWall(targetX, targetY, map))
+        if (!CheckForWall(targetX, targetY, entity))
             return false;
         
         // If we got here after all the other checks, return true
@@ -38,10 +38,18 @@ public static class Movement
         
         return true;
     }
-    private static bool CheckForWall(int targetX, int targetY, Map map)
+    private static bool CheckForWall(int targetX, int targetY, Entity entity)
     {
+        string walls;
+
+        // If the entity we're moving isn't a player, there's more symbols to treat as walls
+        if (entity is not Player)
+            walls = "*|^$%";        // wall, gate, coin, gem, guard
+        else
+            walls = "*|";           // wall, gate
+
         // Check if the target cell is a wall character
-        if ("*|".Contains(map.Layout[targetY][targetX]))
+        if (walls.Contains(entity.CurrentMap.Layout[targetY][targetX]))
             return false;
 
         return true;
