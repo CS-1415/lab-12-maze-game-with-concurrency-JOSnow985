@@ -2,16 +2,16 @@
 
 public static class Movement
 {
-    public static bool TryMove(int targetX, int targetY, List<List<char>> mapList)
+    public static bool TryMove(int targetX, int targetY, Map map)
     {
         // If the check fails, we set passing to false
         if (!CheckScreenDimensions(targetX, targetY))
             return false;
 
-        if (!CheckMapDimensions(targetX, targetY, mapList))
+        if (!CheckMapDimensions(targetX, targetY, map))
             return false;
 
-        if (!CheckForWall(targetX, targetY, mapList))
+        if (!CheckForWall(targetX, targetY, map))
             return false;
         
         // If we got here after all the other checks, return true
@@ -27,21 +27,21 @@ public static class Movement
         // If the target coordinates don't fail the two previous conditions, return true
         return true;
     }
-    private static bool CheckMapDimensions(int targetX, int targetY, List<List<char>> mapList)
+    private static bool CheckMapDimensions(int targetX, int targetY, Map map)
     {
-        // Check first row's count, don't have to check against zeroes here because we did it above
-        if (targetX > mapList[1].Count)
+        // Check map's width, don't have to check against zeroes here because we did it above
+        if (targetX > map.Width)
             return false;
-        // Check map list's couunt overall, remember it's zero-indexed so it's not ">="
-        if (targetY > mapList.Count)
+        // Check map's height, remember it's zero-indexed so it's not ">="
+        if (targetY > map.Height)
             return false;
         
         return true;
     }
-    private static bool CheckForWall(int targetX, int targetY, List<List<char>> mapList)
+    private static bool CheckForWall(int targetX, int targetY, Map map)
     {
         // Check if the target cell is a wall character
-        if ("*|".Contains(mapList[targetY][targetX]))
+        if ("*|".Contains(map.Layout[targetY][targetX]))
             return false;
 
         return true;

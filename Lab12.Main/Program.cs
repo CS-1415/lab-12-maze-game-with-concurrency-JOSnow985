@@ -8,41 +8,21 @@ Console.WriteLine("--- Rules Placeholder ---");
 Console.WriteLine("Insert Coin to Play...");
 Console.ReadKey();
 
-// Load Map, clear screen & test draw
-Console.Clear();
-string[] mapArray = File.ReadAllLines("map.txt");
-List<List<char>> map = [];
+// Load Map
+Map map = new("map.txt");
 
-// Pull all of the characters out of the map array into a list of lists of chars
-foreach(string line in mapArray)
-{
-    List<char> charList = [];
-    foreach(char c in line)
-    {
-        charList.Add(c);
-    }
-    map.Add(charList);
-}
 
-// Now print the map cell by cell
-foreach(List<char> row in map)
-{
-    foreach(char cell in row)
-    {
-        Console.Write(cell);
-    }
-    Console.WriteLine();
-}
-Console.ReadKey();
+
 
 // Create player object, pass map as a reference
 Player player = new(ref map);
 
 // Loop until the key pressed is Escape, print proposed directions
 ConsoleKey lastKey = ConsoleKey.None;
-Console.Clear();
-do
-{
+do {
+    // Clear screen and print the map cell by cell
+    Console.Clear();
+    map.PrintMap();
     lastKey = Console.ReadKey(true).Key;
     switch (lastKey)
     {

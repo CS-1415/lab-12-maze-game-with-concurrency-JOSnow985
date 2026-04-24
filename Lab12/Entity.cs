@@ -4,10 +4,10 @@ public class Entity
 {
     public int X { get; set; }
     public int Y { get; set; }
-    public List<List<char>> currentMap { get; private set; }
-    public Entity(ref List<List<char>> mapList, int startingX, int startingY)
+    public Map currentMap { get; private set; }
+    public Entity(ref Map map, int startingX, int startingY)
     {
-        currentMap = mapList;
+        currentMap = map;
         X = startingX;
         Y = startingY;
     }
@@ -15,7 +15,7 @@ public class Entity
 
 public class Player : Entity
 {
-    public Player(ref List<List<char>> mapList) : base(ref mapList, 0, 0) {}
+    public Player(ref Map map) : base(ref map, 0, 0) {}
 
     public void Move(Movement.Direction targetDirection)
     {
@@ -31,6 +31,10 @@ public class Player : Entity
 
         // Call TryMove to see if that's a valid location
         if (Movement.TryMove(targetX, targetY, currentMap))
-            (X, Y) = (targetX, targetY);    // If the location is valid, update player's coordinates
+            {
+                currentMap.ChangeCell(X, Y, ' ');
+                (X, Y) = (targetX, targetY);    // If the location is valid, update player's coordinates
+                currentMap.ChangeCell(X, Y, 'P');
+            }
     }
 }
