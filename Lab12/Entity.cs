@@ -61,3 +61,8 @@ public class Player : Entity
         }
     }
 }
+
+public class Guard : Entity
+{
+    public Guard(Map map, int startingX, int startingY) : base(map, startingX, startingY, '%') {}
+}
