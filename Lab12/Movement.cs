@@ -55,5 +55,16 @@ public static class Movement
         return true;
     }
 
+    public static (int, int) DirectionToCoordinates(int X, int Y, Direction targetDirection) =>
+        // Use direction to figure out target coordinates
+        targetDirection switch
+        {
+            Direction.Up    => (X, Y - 1),
+            Direction.Right => (X + 1, Y),
+            Direction.Down  => (X, Y + 1),
+            Direction.Left  => (X - 1, Y),
+            _ => (X, Y)
+        };
+
     public enum Direction { Up, Right, Down, Left}
 }
