@@ -78,6 +78,31 @@ public class Player : Entity
             MoveToken(targetX, targetY);
         }
     }
+
+    public void CheckForGuard()
+    {
+        while (CurrentStatus == Status.Alive)       // Watches for any change in status, both Dead and Escaped will end this
+        {
+            // Acquire player coordinates to check against Guards, use this method for proper locking
+            (int, int) playerCoordinates = CheckCoordinates();
+
+            foreach (Entity entity in CurrentMap.MapEntities)
+            {
+                if (entity is Guard guard)
+                {
+                    // Acquire guard coordinates, method for locking again
+                    (int, int) guardCoordinates = guard.CheckCoordinates();
+
+                    if (playerCoordinates == guardCoordinates)
+                    {
+                        CurrentStatus = Status.Dead;      // ow
+                    }
+                }
+            }
+
+            Thread.Sleep(100);  // Only try to run this check every x ms
+        }
+    }
 }
 
 public class Guard : Entity

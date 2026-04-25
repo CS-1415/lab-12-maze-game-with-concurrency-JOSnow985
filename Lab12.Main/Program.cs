@@ -32,6 +32,10 @@ foreach (Thread guardThread in Guards)
     guardThread.Start();
 }
 
+// Set up player's collision detector so we know if they've died
+Thread playerCollisionThread = new(player.CheckForGuard);
+playerCollisionThread.Start();
+
 // Loop until the key pressed is Escape or Player status is either Dead or Escaped
 ConsoleKey lastKey;
 do {
@@ -68,19 +72,7 @@ do {
 renderer.IsRendering = false;   // Kill map render loop
 renderThread.Join();            // Wait for final frame to draw
 
-// Kill Guards to clean them up
-foreach (Entity entity in map.MapEntities)
-{
-    if (entity is Guard guard)
-    {
-        guard.CurrentStatus = Entity.Status.Dead;
-    }
-}
-foreach (Thread guardThread in Guards)
-{
-    guardThread.Join();
-}
-
+// End screen handler here so we can use the player's status enum
 Console.Clear();
 if (player.CurrentStatus is Entity.Status.Dead)
 {
@@ -92,3 +84,21 @@ else if (player.CurrentStatus is Entity.Status.Escaped)
 }
 else
     Console.WriteLine("Bye!");
+
+
+// Kill player to make sure we're not still checking coordinates
+player.CurrentStatus = Entity.Status.Dead;
+playerCollisionThread.Join();
+
+// Kill Guards to make sure they're not moving around still
+foreach (Entity entity in map.MapEntities)
+{
+    if (entity is Guard guard)
+    {
+        guard.CurrentStatus = Entity.Status.Dead;
+    }
+}
+foreach (Thread guardThread in Guards)
+{
+    guardThread.Join();
+}
