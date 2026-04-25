@@ -47,7 +47,7 @@ public class Entity
 public class Player : Entity
 {
     public int Score { get; set; }
-    public Player(Map map) : base(map, 0, 0, 'P') {}
+    public Player(Map map) : base(map, 0, 0, '@') {}
 
     public void Move(Movement.Direction targetDirection)
     {
