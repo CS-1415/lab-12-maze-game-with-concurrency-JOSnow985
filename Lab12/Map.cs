@@ -4,7 +4,13 @@ public class Map
 {
     public int Height => Layout.Count;        // Map's height boundary is the count of the list of list of cells
     public int Width => Layout[0].Count;      // Map's width boundary is the count of cells in the first list of cells
-    public List<List<char>> Layout { get; private set; } = [];
+    private readonly object _layoutlock = new();
+    private List<List<char>> layout = [];
+    public List<List<char>> Layout
+    {
+        get         { lock (_layoutlock) { return layout;  } }
+        private set { lock (_layoutlock) { layout = value; } }
+    }
     public List<Entity> MapEntities { get; private set; }
     public Map(string mapfile)
     {
@@ -45,37 +51,49 @@ public class Map
 
         return entities;
     }
-    public void ChangeCell(int col, int row, char c) => Layout[row][col] = c;
+    public void ChangeCell(int col, int row, char c)
+    {
+        lock (_layoutlock)
+        {
+            Layout[row][col] = c;
+        }
+    }
     public void DisableGateSymbols()
     {
         List<List<char>> degatedMap = [];
-        foreach (List<char> row in Layout)
-        {
-            List<char> degatedRow = [];
-            foreach(char symbol in row)
-            {
-                if (symbol == '|')
-                {
-                    degatedRow.Add(' ');
-                }
-                else
-                    degatedRow.Add(symbol);
-            }
-            degatedMap.Add(degatedRow);
-        }
 
-        Layout = degatedMap;
+        lock (_layoutlock)      // Need to wrap this entire operation in a lock
+        {
+            foreach (List<char> row in Layout)
+            {
+                List<char> degatedRow = [];
+                foreach (char symbol in row)
+                {
+                    if (symbol == '|')
+                    {
+                        degatedRow.Add(' ');
+                    }
+                    else
+                        degatedRow.Add(symbol);
+                }
+                degatedMap.Add(degatedRow);
+            }
+            Layout = degatedMap;
+        }
     }
     public void PrintMap()
     {
-        // Iterate over rows and characters and print them
-        foreach (List<char> row in Layout)
+        lock (_layoutlock)
         {
-            foreach (char cell in row)
+            // Iterate over rows and characters and print them
+            foreach (List<char> row in Layout)
             {
-                Console.Write(cell);
+                foreach (char cell in row)
+                {
+                    Console.Write(cell);
+                }
+                Console.WriteLine();
             }
-            Console.WriteLine();
         }
     }
 }

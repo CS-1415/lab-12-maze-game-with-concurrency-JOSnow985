@@ -14,15 +14,16 @@ Map map = new("map.txt");
 // Create player object, pass map as a reference
 Player player = new(map);
 
+// Create renderer object, pass map, move to thread and start
+Renderer renderer = new(map, player);
+Thread renderThread = new(renderer.RenderMap);
+renderThread.Start();
+
 // Loop until the key pressed is Escape, print proposed directions
 ConsoleKey lastKey = ConsoleKey.None;
 do {
-    // Clear screen and print the map cell by cell
-    Console.Clear();
-    map.PrintMap();
-
-    // Print player score as a line under map
-    Console.WriteLine(player.Score);
+    // Enable Rendering flag for renderer thread
+    renderer.IsRendering = true;
 
     // Player input switch
     lastKey = Console.ReadKey(true).Key;
@@ -53,6 +54,12 @@ do {
     }
 
 } while (lastKey != ConsoleKey.Escape && player.CurrentStatus == Entity.Status.Alive);
+
+// Kill map render loop
+renderer.IsRendering = false;
+
+// Wait for final frame to draw
+renderThread.Join();
 
 Console.Clear();
 if (player.CurrentStatus is Entity.Status.Dead)
