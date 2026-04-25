@@ -4,8 +4,19 @@ public class Entity
 {
     public char Symbol { get; private set; }
     public Status CurrentStatus = Status.Alive;     // All entities begin the game "Alive"
-    public int X { get; set; }
-    public int Y { get; set; }
+    private readonly object _xylock = new();
+    private int _x;
+    private int _y;
+    public int X
+    {
+        get         { lock (_xylock) { return _x;  } }
+        private set { lock (_xylock) { _x = value; } }
+    }
+    public int Y
+    {
+        get         { lock (_xylock) { return _y;  } }
+        private set { lock (_xylock) { _y = value; } }
+    }
     public Map CurrentMap { get; private set; }
     public Entity(Map map, int startingX, int startingY, char c)
     {
@@ -14,10 +25,20 @@ public class Entity
         Y = startingY;
         Symbol = c;
     }
+    public (int, int) CheckCoordinates()
+    {
+        lock (_xylock)
+        {
+            return (X, Y);
+        }
+    }
     public void MoveToken(int targetX, int targetY) // Update entity's coordinates and the map's characters
     {
-        CurrentMap.MoveSymbol(X, Y, targetX, targetY, Symbol);
-        (X, Y) = (targetX, targetY);                // Update entity's current coordinates
+        lock (_xylock)
+        {
+            CurrentMap.MoveSymbol(X, Y, targetX, targetY, Symbol);
+            (X, Y) = (targetX, targetY);                // Update entity's current coordinates
+        }
     }
 
     public enum Status { Alive, Dead, Escaped }     // Alive and Dead should be for any entity, Escaped should only be set for the player on the win condition
@@ -71,6 +92,7 @@ public class Guard : Entity
             Movement.Direction targetDirection = (Movement.Direction)GuardRNG.Next(0,4);
 
             // Convert generated direction to target coordinates
+            // Might not need a lock, because the method that would change X and Y is the method this call is coming from?
             (int targetX, int targetY) = Movement.DirectionToCoordinates(X, Y, targetDirection);
 
             // Only move if we get chose a valid direction
