@@ -19,7 +19,7 @@ public class Renderer
             renderMap.PrintMap();
 
             // Print player score under map
-            Console.WriteLine(renderPlayer.Score);
+            Console.WriteLine($"SCORE: {renderPlayer.Score}");
 
             // Use Sleep to draw a frame every xth of a second
             Thread.Sleep(1000 / 240);
