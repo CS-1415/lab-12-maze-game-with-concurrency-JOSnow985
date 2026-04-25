@@ -3,6 +3,7 @@
 public class Entity
 {
     public char Symbol { get; private set; }
+    public Status CurrentStatus = Status.Alive;     // All entities begin the game "Alive"
     public int X { get; set; }
     public int Y { get; set; }
     public Map CurrentMap { get; private set; }
@@ -13,12 +14,14 @@ public class Entity
         Y = startingY;
         Symbol = c;
     }
-    public void MoveToken(int targetX, int targetY)     // Update entity's coordinates and the map's characters
+    public void MoveToken(int targetX, int targetY) // Update entity's coordinates and the map's characters
     {
-        CurrentMap.ChangeCell(X, Y, ' ');       // Clear entity's old cell
-        (X, Y) = (targetX, targetY);            // Update entity's current coordinates
-        CurrentMap.ChangeCell(X, Y, Symbol);    // Write entity character to new coordinates
+        CurrentMap.ChangeCell(X, Y, ' ');           // Clear entity's old cell
+        (X, Y) = (targetX, targetY);                // Update entity's current coordinates
+        CurrentMap.ChangeCell(X, Y, Symbol);        // Write entity character to new coordinates
     }
+
+    public enum Status { Alive, Dead, Escaped }     // Alive and Dead should be for any entity, Escaped should only be set for the player on the win condition
 }
 
 public class Player : Entity
@@ -38,19 +41,21 @@ public class Player : Entity
             _ => (X, Y)
         };
 
-        // Call TryMove, if true, call MoveToken to update player's coordinates
+        // Call TryMove, if true, evaluate possible result from target cell's symbol, then call MoveToken to update player's coordinates
         if (Movement.TryMove(targetX, targetY, this))
         {
-            // Probably a better place to put this
-            // Grab target cell's symbol and check if it's a score symbol
+            // Grab target cell's symbol and do something if we need to
             char targetSymbol = CurrentMap.Layout[targetY][targetX];
             switch (targetSymbol)
             {
-                case '$':
+                case '$':                               // Gem symbol, increment score by 200
                     Score += 200;
                     break;
-                case '^':
+                case '^':                               // Coin symbol, increment score by 100
                     Score += 100;
+                    break;
+                case '#':
+                    CurrentStatus = Status.Escaped;     // Exit symbol, set status to escaped
                     break;
                 default:
                     break;
