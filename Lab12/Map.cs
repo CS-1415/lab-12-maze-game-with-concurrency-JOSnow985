@@ -38,13 +38,16 @@ public class Map
     private List<Entity> LoadEntityList()
     {
         List<Entity> entities = [];
-        for(int y = 0; y < Layout.Count; y++)
+        lock (_layoutlock)
         {
-            for(int x = 0; x < Layout[y].Count; x++)
+            for (int y = 0; y < Layout.Count; y++)
             {
-                if (Layout[y][x] == '%')
+                for (int x = 0; x < Layout[y].Count; x++)
                 {
-                    entities.Add(new Guard(this, x, y));
+                    if (Layout[y][x] == '%')
+                    {
+                        entities.Add(new Guard(this, x, y));
+                    }
                 }
             }
         }
