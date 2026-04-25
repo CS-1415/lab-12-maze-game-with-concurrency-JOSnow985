@@ -1,14 +1,16 @@
 ﻿// Jaden Olvera, 4/24/26, Lab 12 Maze Game with Concurrency
-
-// Intro & Story
 using Lab12;
 
+// --- Intro ---
 Console.Clear();
-Console.WriteLine("Welcome to a slightly-less-basic, super-cool maze game with concurrency, the guards will move independently of you!");
-Console.WriteLine("--- Symbols ---\n* - Wall, can't walk through these!\n| - Gate, they'll disappear if you get 1000 score!\n^ - Coin, worth 100 score!\n$ - Gem, worth 200 score!\n# - Exit, get here to win the game!");
+Console.CursorVisible = false;  // Hide cursor so it looks a bit nicer
+
+Console.WriteLine("Welcome to a slightly-less-basic, super-cool maze game with concurrency, the guards will move independently of you, wow!");
+Console.WriteLine("\n--- Symbols ---\n* - Wall, can't walk through these!\n| - Gate, they'll disappear if you get 1000 score!\n^ - Coin, worth 100 score!\n$ - Gem, worth 200 score!\n# - Exit, get here to win the game!");
 Console.WriteLine("\n\n--- Insert Coin to Play ---");
 Console.ReadKey();
 
+// --- Set Up ---
 // Load Map and create Player on map
 Map map = new("map.txt");
 Player player = new(map);
@@ -36,6 +38,8 @@ foreach (Thread guardThread in Guards)
 Thread playerCollisionThread = new(player.CheckForGuard);
 playerCollisionThread.Start();
 
+
+// -- Main Thread Game Loop ---
 // Loop until the key pressed is Escape or Player status is either Dead or Escaped
 ConsoleKey lastKey = ConsoleKey.None;
 do {
@@ -71,6 +75,7 @@ do {
 
 } while (lastKey != ConsoleKey.Escape && player.CurrentStatus == Entity.Status.Alive);
 
+// -- Game Over ---
 renderer.IsRendering = false;   // Kill map render loop
 renderThread.Join();            // Wait for final frame to draw
 
@@ -78,21 +83,22 @@ renderThread.Join();            // Wait for final frame to draw
 Console.Clear();
 if (player.CurrentStatus is Entity.Status.Dead)
 {
-    Console.WriteLine("You died, but I'm sure you'll do better if you try again!");
+    Console.WriteLine("You died, restarting in 5... 4... 3...");
 }
 else if (player.CurrentStatus is Entity.Status.Escaped)
 {
-    Console.WriteLine("You win! Placeholder");
+    Console.WriteLine($"You win! You made it out with a score of: {player.Score}, nice!");
 }
 else
-    Console.WriteLine("Bye!");
+    Console.WriteLine("Host has left the game, host migration in progress..."); // Just some Payday references for the ending lines
 
 
+// --- Final Clean Up ---
 // Kill player to make sure we're not still checking coordinates
 player.CurrentStatus = Entity.Status.Dead;
 playerCollisionThread.Join();
 
-// Kill Guards to make sure they're not moving around still
+// Kill Guards to make sure they're not still moving around
 foreach (Entity entity in map.MapEntities)
 {
     if (entity is Guard guard)
@@ -104,3 +110,5 @@ foreach (Thread guardThread in Guards)
 {
     guardThread.Join();
 }
+
+Console.CursorVisible = true;   // absolutely need to restore this
