@@ -18,6 +18,20 @@ Renderer renderer = new(map, player);
 Thread renderThread = new(renderer.RenderMap);
 renderThread.Start();
 
+// Set up Guard objects and threads into a list we can iterate over to work on all the guards at the same time
+List<Thread> Guards = [];
+foreach (Entity entity in map.MapEntities)
+{
+    if (entity is Guard guard)
+    {
+        Guards.Add(new(guard.GuardStuff));
+    }
+}
+foreach (Thread guardThread in Guards)
+{
+    guardThread.Start();
+}
+
 // Loop until the key pressed is Escape or Player status is either Dead or Escaped
 ConsoleKey lastKey;
 do {
@@ -53,6 +67,19 @@ do {
 
 renderer.IsRendering = false;   // Kill map render loop
 renderThread.Join();            // Wait for final frame to draw
+
+// Kill Guards to clean them up
+foreach (Entity entity in map.MapEntities)
+{
+    if (entity is Guard guard)
+    {
+        guard.CurrentStatus = Entity.Status.Dead;
+    }
+}
+foreach (Thread guardThread in Guards)
+{
+    guardThread.Join();
+}
 
 Console.Clear();
 if (player.CurrentStatus is Entity.Status.Dead)
