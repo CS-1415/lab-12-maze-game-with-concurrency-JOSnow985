@@ -3,28 +3,24 @@
 // Intro & Story
 using Lab12;
 
+Console.Clear();
 Console.WriteLine("Welcome to a slightly-less-basic, super-cool maze game with concurrency, the guards will move independently of you!");
-Console.WriteLine("--- Rules Placeholder ---");
-Console.WriteLine("Insert Coin to Play...");
+Console.WriteLine("--- Symbols ---\n* - Wall, can't walk through these!\n| - Gate, they'll disappear if you get 1000 score!\n^ - Coin, worth 100 score!\n$ - Gem, worth 200 score!\n# - Exit, get here to win the game!");
+Console.WriteLine("\n\n--- Insert Coin to Play ---");
 Console.ReadKey();
 
-// Load Map
+// Load Map and create Player on map
 Map map = new("map.txt");
-
-// Create player object, pass map as a reference
 Player player = new(map);
 
-// Create renderer object, pass map, move to thread and start
+// Create renderer object, pass map and player, move to new thread and start rendering
 Renderer renderer = new(map, player);
 Thread renderThread = new(renderer.RenderMap);
 renderThread.Start();
 
-// Loop until the key pressed is Escape, print proposed directions
-ConsoleKey lastKey = ConsoleKey.None;
+// Loop until the key pressed is Escape or Player status is either Dead or Escaped
+ConsoleKey lastKey;
 do {
-    // Enable Rendering flag for renderer thread
-    renderer.IsRendering = true;
-
     // Player input switch
     lastKey = Console.ReadKey(true).Key;
     switch (lastKey)
@@ -47,7 +43,7 @@ do {
             break;
     }
 
-    // Check if player's score is high enough to drop the gate
+    // Drop the gate if the player's score is high enough
     if (player.Score >= 1000)
     {
         map.DisableGateSymbols();
@@ -55,11 +51,8 @@ do {
 
 } while (lastKey != ConsoleKey.Escape && player.CurrentStatus == Entity.Status.Alive);
 
-// Kill map render loop
-renderer.IsRendering = false;
-
-// Wait for final frame to draw
-renderThread.Join();
+renderer.IsRendering = false;   // Kill map render loop
+renderThread.Join();            // Wait for final frame to draw
 
 Console.Clear();
 if (player.CurrentStatus is Entity.Status.Dead)

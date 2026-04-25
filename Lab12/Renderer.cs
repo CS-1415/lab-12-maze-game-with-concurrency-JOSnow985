@@ -2,7 +2,7 @@
 
 public class Renderer
 {
-    public bool IsRendering = false;
+    public bool IsRendering = true;
     private Map renderMap;
     private Player renderPlayer;
     public Renderer(Map targetMap, Player targetPlayer)
