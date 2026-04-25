@@ -32,14 +32,7 @@ public class Player : Entity
     public void Move(Movement.Direction targetDirection)
     {
         // Use direction to figure out target coordinates
-        (int targetX, int targetY) = targetDirection switch
-        {
-            Movement.Direction.Up    => (X,     Y - 1),
-            Movement.Direction.Right => (X + 1, Y),
-            Movement.Direction.Down  => (X,     Y + 1),
-            Movement.Direction.Left  => (X - 1, Y),
-            _ => (X, Y)
-        };
+        (int targetX, int targetY) = Movement.DirectionToCoordinates(X, Y, targetDirection);
 
         // Call TryMove, if true, evaluate possible result from target cell's symbol, then call MoveToken to update player's coordinates
         if (Movement.TryMove(targetX, targetY, this))
@@ -69,5 +62,24 @@ public class Player : Entity
 
 public class Guard : Entity
 {
+    private static Random GuardRNG = new();
     public Guard(Map map, int startingX, int startingY) : base(map, startingX, startingY, '%') {}
+    public void Move()
+    {
+        while (true)
+        {
+            // [0,4) range to match valid Direction enumerations
+            Movement.Direction targetDirection = (Movement.Direction)GuardRNG.Next(0,4);
+
+            // Convert generated direction to target coordinates
+            (int targetX, int targetY) = Movement.DirectionToCoordinates(X, Y, targetDirection);
+
+            // Only return if we get a valid location to move to
+            if (Movement.TryMove(targetX, targetY, this))
+            {
+                MoveToken(targetX, targetY);
+                return;
+            }
+        }
+    }
 }
