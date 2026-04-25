@@ -37,28 +37,30 @@ Thread playerCollisionThread = new(player.CheckForGuard);
 playerCollisionThread.Start();
 
 // Loop until the key pressed is Escape or Player status is either Dead or Escaped
-ConsoleKey lastKey;
+ConsoleKey lastKey = ConsoleKey.None;
 do {
-    // Player input switch
-    lastKey = Console.ReadKey(true).Key;
-    switch (lastKey)
-    {
-        case ConsoleKey.W or ConsoleKey.UpArrow:
-            player.Move(Movement.Direction.Up);
-            break;
-        case ConsoleKey.D or ConsoleKey.RightArrow:
-            player.Move(Movement.Direction.Right);
-            break;
-        case ConsoleKey.S or ConsoleKey.DownArrow:
-            player.Move(Movement.Direction.Down);
-            break;
-        case ConsoleKey.A or ConsoleKey.LeftArrow:
-            player.Move(Movement.Direction.Left);
-            break;
-        case ConsoleKey.Escape:
-            break;
-        default:
-            break;
+    if (Console.KeyAvailable)
+    {    // Player input switch
+        lastKey = Console.ReadKey(true).Key;
+        switch (lastKey)
+        {
+            case ConsoleKey.W or ConsoleKey.UpArrow:
+                player.Move(Movement.Direction.Up);
+                break;
+            case ConsoleKey.D or ConsoleKey.RightArrow:
+                player.Move(Movement.Direction.Right);
+                break;
+            case ConsoleKey.S or ConsoleKey.DownArrow:
+                player.Move(Movement.Direction.Down);
+                break;
+            case ConsoleKey.A or ConsoleKey.LeftArrow:
+                player.Move(Movement.Direction.Left);
+                break;
+            case ConsoleKey.Escape:
+                break;
+            default:
+                break;
+        }
     }
 
     // Drop the gate if the player's score is high enough
