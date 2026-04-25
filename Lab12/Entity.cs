@@ -63,9 +63,9 @@ public class Guard : Entity
 {
     private static Random GuardRNG = new();
     public Guard(Map map, int startingX, int startingY) : base(map, startingX, startingY, '%') {}
-    public void Move()
+    public void GuardStuff()
     {
-        while (true)
+        while (CurrentStatus == Status.Alive)
         {
             // [0,4) range to match valid Direction enumerations
             Movement.Direction targetDirection = (Movement.Direction)GuardRNG.Next(0,4);
@@ -73,12 +73,14 @@ public class Guard : Entity
             // Convert generated direction to target coordinates
             (int targetX, int targetY) = Movement.DirectionToCoordinates(X, Y, targetDirection);
 
-            // Only return if we get a valid location to move to
+            // Only move if we get chose a valid direction
             if (Movement.TryMove(targetX, targetY, this))
             {
                 MoveToken(targetX, targetY);
-                return;
             }
+
+            // Wait to try moving again
+            Thread.Sleep(200);
         }
     }
 }
