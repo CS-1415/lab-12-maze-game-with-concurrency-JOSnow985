@@ -52,4 +52,16 @@ do {
         map.DisableGateSymbols();
     }
 
-} while (lastKey != ConsoleKey.Escape);
+} while (lastKey != ConsoleKey.Escape && player.CurrentStatus == Entity.Status.Alive);
+
+Console.Clear();
+if (player.CurrentStatus is Entity.Status.Dead)
+{
+    Console.WriteLine("You died, but I'm sure you'll do better if you try again!");
+}
+else if (player.CurrentStatus is Entity.Status.Escaped)
+{
+    Console.WriteLine("You win! Placeholder");
+}
+else
+    Console.WriteLine("Bye!");
