@@ -16,9 +16,8 @@ public class Entity
     }
     public void MoveToken(int targetX, int targetY) // Update entity's coordinates and the map's characters
     {
-        CurrentMap.ChangeCell(X, Y, ' ');           // Clear entity's old cell
+        CurrentMap.MoveSymbol(X, Y, targetX, targetY, Symbol);
         (X, Y) = (targetX, targetY);                // Update entity's current coordinates
-        CurrentMap.ChangeCell(X, Y, Symbol);        // Write entity character to new coordinates
     }
 
     public enum Status { Alive, Dead, Escaped }     // Alive and Dead should be for any entity, Escaped should only be set for the player on the win condition

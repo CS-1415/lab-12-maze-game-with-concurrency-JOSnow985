@@ -51,11 +51,12 @@ public class Map
 
         return entities;
     }
-    public void ChangeCell(int col, int row, char c)
+    public void MoveSymbol(int oldCol, int oldRow, int newCol, int newRow, char c)
     {
         lock (_layoutlock)
         {
-            Layout[row][col] = c;
+            Layout[oldRow][oldCol] = ' ';
+            Layout[newRow][newCol] = c;
         }
     }
     public void DisableGateSymbols()
